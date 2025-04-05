@@ -18,6 +18,10 @@ def grid_score(grid: np.ndarray) -> float:
             elif val == 2:
                 count2 += 1
         # add counts to respective score if row is winnable by that player
+        # if count1 == 3:
+        #     return 1
+        # elif count2 == 3:
+        #     return -1
         if count2 == 0:
             score1 += count1
         elif count1 == 0:
@@ -38,7 +42,8 @@ def grid_score(grid: np.ndarray) -> float:
             score2 += count2
 
         # repeat for diagonals
-        val1, val2 = grid[i][i], grid[2-i][i]
+        val1 = grid[i][i]
+        val2 = grid[2-i][i]
         if val1 == 1:
             diag1FIRST += 1
         elif val1 == 2:
@@ -53,7 +58,7 @@ def grid_score(grid: np.ndarray) -> float:
         score2 += diag2FIRST
     if diag2SCND == 0:
         score1 += diag1SCND
-    elif diag1FIRST == 0:
+    elif diag1SCND == 0:
         score2 += diag2SCND
 
     return score1 - score2
@@ -62,5 +67,13 @@ def trial(grid):
     print(grid)
     print(grid_score(grid))
 
-grid1 = np.array([[0, 0, 2], [0, 1, 0], [0, 0, 0]])
-trial(grid1)
+# grid0 = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+# grid1 = np.array([[2, 1, 1], [1, 2, 2], [1, 2, 1]])
+# grid2 = np.array([[0, 0, 2], [0, 1, 0], [0, 0, 0]])
+
+grid3 = np.array([[0, 0, 1], [0, 2, 0], [0, 0, 0]]) #-1
+grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 0]]) #1
+grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 2]]) #-2
+grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 2, 0]]) #-1
+
+trial(grid3)
