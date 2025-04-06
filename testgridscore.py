@@ -67,13 +67,32 @@ def trial(grid):
     print(grid)
     print(grid_score(grid))
 
+def v2(grid: np.ndarray) -> float:
+    # concatenate all rows(horizontal, vertical, diagonal) into a single array
+    allRows = np.concatenate(( grid, grid.T, \
+    grid.diagonal()[np.newaxis, :], np.fliplr(grid).diagonal()[np.newaxis, :]), \
+    axis=0)
+    
+    ones, twos, zeros = (allRows == 1), (allRows == 2), (allRows == 0)
+    onesOrZeros = np.logical_or(ones, zeros)
+    twosOrZeros = np.logical_or(twos, zeros)
+    oneCount = np.sum(ones, axis=1)
+    twoCount = np.sum(twos, axis=1)
+    oneScore = np.sum(oneCount[np.all(onesOrZeros, axis=1)])
+    twoScore = np.sum(twoCount[np.all(twosOrZeros, axis=1)])
+    return oneScore - twoScore
+
+def sigmoid(x:float) -> float:
+    return 1 / (1 + np.exp(-x))
+
 # grid0 = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-# grid1 = np.array([[2, 1, 1], [1, 2, 2], [1, 2, 1]])
+# grid = np.array([[2, 1, 1], [1, 2, 2], [1, 2, 1]])
 # grid2 = np.array([[0, 0, 2], [0, 1, 0], [0, 0, 0]])
 
-grid3 = np.array([[0, 0, 1], [0, 2, 0], [0, 0, 0]]) #-1
-grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 0]]) #1
-grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 2]]) #-2
+# grid3 = np.array([[0, 0, 1], [0, 2, 0], [0, 0, 0]]) #-1
+# grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 0]]) #1
+# grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 2]]) #-2
 grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 2, 0]]) #-1
 
-trial(grid3)
+print(v2(grid3), sigmoid(v2(grid3)))
+# trial(grid3)
