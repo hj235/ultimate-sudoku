@@ -2,7 +2,7 @@ from utils import State, Action
 import numpy as np
 
 class StudentAgent:
-    def __init__(self, depth=2):
+    def __init__(self, depth=4):
         """Instantiates your agent.
         """
         self.depth = depth
@@ -13,11 +13,13 @@ class StudentAgent:
     
     # grid score calculation algorithm:
     #   for every possible row (horizontal, vertical & diagonal, 8 total)
+    #       if player 1 cannot win +0 to score1 and continue
     #       if player 1 can win
     #           add number of player 1's tiles to score1
+    #       if player 2 cannot win +0 to score2 and continue
     #       if player 2 can win
     #           add number of player 2's tiles to score2
-    # return sigmoid(score1 - score2)
+    # return score1 - score2
     def computeLocalScore(self, grid: np.ndarray) -> float:
         # concatenate all rows(horizontal, vertical, diagonal) into a single array
         allRows = np.concatenate(( grid, grid.T, \
@@ -52,11 +54,56 @@ class StudentAgent:
         return self.sigmoid(oneScore - twoScore)
 
     # returns the utility value of the state (use sigmoid function for ML?)
+    # maybe not, so that i can reuse this func for global? or create a local_grid_score
     def utility(self, state: State) -> float:
         if state.is_terminal():
             return state.terminal_utility()
         else:
             return self.computeGlobalScore(state)
+    
+    def minimax(self, state: State, depth: int, alpha:float, beta: float) -> Action:
+        _, best_action = self.maximise(state, depth, alpha, beta)
+        return best_action
+    
+    # returns tuple of utility value of that state, and the action taken (None if terminal or depth reached)
+    def maximise(self, state: State, depth: int, alpha: float, beta: float) -> tuple:
+        if state.is_terminal():
+            return state.terminal_utility(), None
+        if depth == 0:
+            return self.utility(state), None
+        best_val = -np.inf
+        best_action = None
+        for action in state.get_all_valid_actions():
+            copy = state.clone()
+            new_state = copy.change_state(action)
+            next_val, _ = self.minimise(new_state, depth - 1, alpha, beta)
+            if next_val > best_val:
+                best_val = next_val
+                best_action = action
+            alpha = max(alpha, best_val)
+            if best_val >= beta:
+                return best_val, best_action
+        return best_val, best_action
+    
+    def minimise(self, state: State, depth: int, alpha: float, beta: float) -> tuple:
+        if state.is_terminal():
+            return state.terminal_utility(), None
+        if depth == 0:
+            return self.utility(state), None
+        best_val = np.inf
+        best_action = None
+        for action in state.get_all_valid_actions():
+            copy = state.clone()
+            new_state = copy.change_state(action)
+            next_val, _ = self.maximise(new_state, depth - 1, alpha, beta)
+            if next_val < best_val:
+                best_val = next_val
+                best_action = action
+            beta = min(beta, best_val)
+            if best_val <= alpha:
+                return best_val, best_action
+        return best_val, best_action
+        
 
     def choose_action(self, state: State) -> Action:
         """Returns a valid action to be played on the board.
@@ -66,13 +113,5 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
-        best_action, best_value = None, -np.inf
-        actions = state.get_all_valid_actions()
-        for action in actions:
-            val = self.utility(state.change_state(action))
-            if val > best_value:
-                best_value = val
-                best_action = action
-        if best_action is None:
-            return state.get_random_valid_action()
+        best_action = self.minimax(state, self.depth, -np.inf, np.inf)
         return best_action
