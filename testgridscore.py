@@ -94,5 +94,9 @@ def sigmoid(x:float) -> float:
 # grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 2]]) #-2
 grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 2, 0]]) #-1
 
-print(v2(grid3), sigmoid(v2(grid3)))
+cop = grid3.astype(np.float64)
+grid3[0][0] = 1
+
+print(grid3)
+print(cop)
 # trial(grid3)
