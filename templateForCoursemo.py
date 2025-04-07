@@ -113,5 +113,9 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
+
+        # Uncomment this line to play as player 2
+        state = state.invert()
+        
         best_action = self.minimax(state, self.depth, -np.inf, np.inf)
         return best_action
