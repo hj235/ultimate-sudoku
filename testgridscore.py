@@ -365,3 +365,6 @@ def globalScore(state: State):
 print(globalScore(state))
 # print(state.invert().local_board_status)
 print(globalScore(state.invert()))
+
+from utilsHJ import getLocalScores
+print(getLocalScores(state))

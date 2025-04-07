@@ -35,6 +35,6 @@ if ones and not twos:
 elif twos and not ones:
     print("B")
 
-# ========================= LAZY EVALUATION =========================
-# gen = ((lambda : print(i)) for i in range(3)) 
-# print(gen[1])
+from tfmData import loadData
+tfmData = loadData("tfmData.pkl")
+print(tfmData[:3])
