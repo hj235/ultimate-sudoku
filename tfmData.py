@@ -1,6 +1,6 @@
 import pickle
 from utils import State, load_data
-from utilsHJ import getLocalScores
+from utilsHJ import getLocalScores, getLinesImm, getGlobalLineScores
 import numpy as np
 
 def tfmData(data: list[tuple[State, float]]) -> list[tuple[list[float], float]]:
@@ -14,10 +14,38 @@ def saveTransformedData(data: list[tuple[State, float]]):
     with open('tfmData.pkl', 'wb') as f:
         pickle.dump(transformed, f)
 
-def loadData(filename) -> list[tuple[list[float], float]]:
+def saveTransformedDataV2():
+    data = loadData("tfmData.pkl")
+    res = []
+    for vals, utility in data:
+        grid = np.array(vals).reshape((3, 3))
+        linesImm = getLinesImm(grid)
+        res.append((linesImm, utility))
+    
+    with open("tfmData2.pkl", "wb") as wf:
+        pickle.dump(res, wf)
+
+def saveTransformedDataV3():
+    data = loadData("tfmData2.pkl")
+    res = []
+    for lines, utility in data:
+        res.append((getGlobalLineScores(lines), utility))
+    
+    with open("tfmData3.pkl", "wb") as wf:
+        pickle.dump(res, wf)
+
+def saveTransformedDataV4():
+    data = loadData("tfmData3.pkl")
+    res = []
+    for scores, utility in data:
+        res.append((scores, (utility+1.0)/2.0))
+    
+    with open("tfmData4.pkl", "wb") as wf:
+        pickle.dump(res, wf)
+
+def loadData(filename):
     with open(filename, "rb") as f:
         data = pickle.load(f)
     return data
 
-data = load_data()
-saveTransformedData(data)
+saveTransformedDataV4()

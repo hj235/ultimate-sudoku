@@ -1,148 +1,6 @@
 import numpy as np
 from utils import State, Action
 
-# def grid_score(grid: np.ndarray) -> float:
-#     score1 = 0 # player one's heuristic score
-#     score2 = 0 # player two's heuristic score
-#     # vvv temp values for counting diagonal scores (FIRST is for the diagonal from top left to bottom right, SCND is for the other diagonal)
-#     diag1FIRST = diag2FIRST = diag1SCND = diag2SCND = 0
-
-#     for i in range(3):
-#         # score by rows
-#         count1 = 0
-#         count2 = 0
-#         # count number of ones and twos into count1 and count2 respectively
-#         for j in range(3):
-#             val = grid[i][j]
-#             if val == 1:
-#                 count1 += 1
-#             elif val == 2:
-#                 count2 += 1
-#         # add counts to respective score if row is winnable by that player
-#         # if count1 == 3:
-#         #     return 1
-#         # elif count2 == 3:
-#         #     return -1
-#         if count2 == 0:
-#             score1 += count1
-#         elif count1 == 0:
-#             score2 += count2
-        
-#         # repeat for columns
-#         count1 = 0
-#         count2 = 0
-#         for k in range(3):
-#             val = grid[k][i]
-#             if val == 1:
-#                 count1 += 1
-#             elif val == 2:
-#                 count2 += 1
-#         if count2 == 0:
-#             score1 += count1
-#         elif count1 == 0:
-#             score2 += count2
-
-#         # repeat for diagonals
-#         val1 = grid[i][i]
-#         val2 = grid[2-i][i]
-#         if val1 == 1:
-#             diag1FIRST += 1
-#         elif val1 == 2:
-#             diag2FIRST += 1
-#         if val2 == 1:
-#             diag1SCND += 1
-#         elif val2 == 2:
-#             diag2SCND += 1
-#     if diag2FIRST == 0:
-#         score1 += diag1FIRST
-#     elif diag1FIRST == 0:
-#         score2 += diag2FIRST
-#     if diag2SCND == 0:
-#         score1 += diag1SCND
-#     elif diag1SCND == 0:
-#         score2 += diag2SCND
-
-#     return score1 - score2
-# def grid_score(grid: np.ndarray) -> float:
-#     score1 = 0 # player one's heuristic score
-#     score2 = 0 # player two's heuristic score
-#     # vvv temp values for counting diagonal scores (FIRST is for the diagonal from top left to bottom right, SCND is for the other diagonal)
-#     diag0FCOUNT = diag0FIRST = diag1FIRST = diag2FIRST = diag3FIRST \
-#         = diag0SCOUNT = diag0SCND = diag1SCND = diag2SCND = diag3SCND = 0
-
-#     for i in range(3):
-#         # score by rows
-#         count0 = sum0 = count1 = count2 = count3 = 0
-#         # count number of ones and twos into count1 and count2 respectively
-#         for j in range(3):
-#             val = grid[i][j]
-#             if val == 1:
-#                 count1 += 1
-#             elif val == 2:
-#                 count2 += 1
-#             elif val ==3:
-#                 count3 += 1
-#             else:
-#                 sum0 += val
-#                 count0 += 1
-#         if count2 == 0 and count3 == 0:
-#             score1 += count1 + sum0
-#         elif count1 == 0 and count3 == 0:
-#             score2 += count2 + count0 - sum0
-        
-#         # repeat for columns
-#         count0 = sum0 = count1 = count2 = count3 = 0
-#         for k in range(3):
-#             val = grid[k][i]
-#             if val == 1:
-#                 count1 += 1
-#             elif val == 2:
-#                 count2 += 1
-#             elif val == 3:
-#                 count3 += 1
-#             else:
-#                 count0 += val
-#         if count2 == 0 and count3 == 0:
-#             score1 += count1 + sum0
-#         elif count1 == 0 and count3 == 0:
-#             score2 += count2 + count0 - sum0
-
-#         # repeat for diagonals
-#         val1 = grid[i][i]
-#         val2 = grid[2-i][i]
-#         if val1 == 1:
-#             diag1FIRST += 1
-#         elif val1 == 2:
-#             diag2FIRST += 1
-#         elif val1 == 3:
-#             diag3FIRST += 1
-#         else:
-#             diag0FIRST += val1
-#             diag0FCOUNT += 1
-#         if val2 == 1:
-#             diag1SCND += 1
-#         elif val2 == 2:
-#             diag2SCND += 1
-#         elif val2 == 3:
-#             diag3SCND += 1
-#         else:
-#             diag0SCND += val2
-#             diag0SCOUNT += 1
-#     if diag2FIRST == 0 and diag3FIRST == 0:
-#         score1 += diag1FIRST + diag0FIRST
-#     elif diag1FIRST == 0 and diag3FIRST == 0:
-#         score2 += diag2FIRST + diag0FIRST - diag0FCOUNT
-#     if diag2SCND == 0 and diag3SCND == 0:
-#         score1 += diag1SCND + diag0SCND
-#     elif diag1SCND == 0 and diag3SCND == 0:
-#         score2 += diag2SCND + diag0SCND - diag0SCOUNT
-
-#     return score1 - score2
-
-def trial(grid):
-    print(grid)
-    print(grid_score(grid))
-
 def v2(grid: np.ndarray) -> float:
     # concatenate all rows(horizontal, vertical, diagonal) into a single array
     allRows = np.concatenate(( grid, grid.T, \
@@ -361,10 +219,63 @@ def globalScore(state: State):
     
     return score
 
-# print(state.local_board_status)
-print(globalScore(state))
-# print(state.invert().local_board_status)
-print(globalScore(state.invert()))
+# def getDepthFromZeros(zeros: int) -> int:
+#     if zeros < 10:
+#         return 100
+#     if zeros < 14:
+#         return 9
+#     if zeros < 16:
+#         return 8
+#     if zeros < 20:
+#         return 7
+#     if zeros < 25:
+#         return 6
+#     if zeros < 40:
+#         return 5
+#     return 4
 
-from utilsHJ import getLocalScores
-print(getLocalScores(state))
+positionalScores = [
+    [0.1, 0, 0.1],
+    [0, 0.2, 0],
+    [0.1, 0, 0.1],
+]
+sigmoidParam = 2.0
+def localScores(grid: np.ndarray) -> float:
+    lines = getLines(grid)
+
+    # calculate score from potential wins
+    score = 0
+    for line in lines:
+        ones = 0
+        twos = 0
+        for val in line:
+            if val == 1:
+                ones += 1
+            elif val == 2:
+                twos += 1
+        if ones and not twos:
+            score += ones
+        elif twos and not ones:
+            score -= twos
+    
+    # reward for positional advantage
+    for i in range(3):
+        for j in range(3):
+            if grid[i][j] == 1:
+                score += positionalScores[i][j]
+            elif grid[i][j] == 2:
+                score -= positionalScores[i][j]
+
+    print(score)
+    return float(score)/sigmoidParam
+
+grid = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 0]])
+print(localScores(grid))
+
+# # print(state.local_board_status)
+# print(globalScore(state))
+# # print(state.invert().local_board_status)
+# print(globalScore(state.invert()))
+
+# from utilsHJ import getLocalScores
+# print(getLocalScores(state))

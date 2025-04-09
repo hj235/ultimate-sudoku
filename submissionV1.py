@@ -38,7 +38,7 @@ class StudentAgent:
 
     # This function calculates a score for a local board, and assumes that the game within the local board has not yet ended.
     # The score is positive if player 1 is winning, negative if player 2 is winning, and 0 if the game is even.
-    def v5(self, grid: np.ndarray) -> float:
+    def localScores(self, grid: np.ndarray) -> float:
         lines = getLines(grid)
 
         # calculate score from potential wins
@@ -63,7 +63,7 @@ class StudentAgent:
         for i in range(3):
             for j in range(3):
                 if state.local_board_status[i][j] == 0:
-                    localBoardStatus[i][j] = expit(self.v5(state.board[i][j]))
+                    localBoardStatus[i][j] = expit(self.localScores(state.board[i][j]))
                 else:
                     localBoardStatus[i][j] = state.local_board_status[i][j]
         localBoardLines = getLinesImm(localBoardStatus)
@@ -146,6 +146,6 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
-        # state = state.invert()
+        state = state.invert()
         best_action = self.minimax(state, self.depth, -np.inf, np.inf)
         return best_action

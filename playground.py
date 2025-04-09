@@ -1,4 +1,5 @@
 import numpy as np
+from utils import State, Action
 
 board=np.array([
         [
@@ -18,23 +19,43 @@ board=np.array([
         ],
     ])
 
+state = State(
+    board=board,
+    fill_num=1,
+    prev_action=(2, 2, 0, 1),
+)
+
 # grid3 = np.array([[0, 0, 1], [0, 2, 0], [0, 0, 0]]) #-1
 # grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 0]]) #1
 # grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 0, 2]]) #-2
 # grid3 = np.array([[0, 0, 1], [0, 2, 0], [1, 2, 0]]) #-1
 
-# def getLines(grid: np.ndarray) -> list:
-#     lines = [0]*8
+# Huhh
+# def countZeros(state: State):
+#     count = 0
+#     for i in range(3):
+#         for j in range(3):
+#             if state.local_board_status[i][j] != 0:
+#                 continue
 
-print(np.sum(np.all(np.logical_or(board == 1, board == 0), axis=3), axis=1))
-# print(np.sum(np.all(np.logical_or(board == 1, board == 0), axis=2), axis=1))
-ones = 1
-twos = 1
-if ones and not twos:
-    print("A")
-elif twos and not ones:
-    print("B")
+#             grid = state.board[i][j]
+#             for r in range(3):
+#                 for c in range(3):
+#                     if grid[i][j] == 0:
+#                         count += 1
+#     return count
 
-from tfmData import loadData
-tfmData = loadData("tfmData.pkl")
-print(tfmData[:3])
+# print(countZeros(state))
+# print(state)
+# print(np.sum(board==0))
+state = State()
+print(np.sum(state.board == 0))
+
+def getDepthFromZeros(zeros: int) -> int:
+    if zeros < 10:
+        return 100
+    if zeros < 20:
+        return 6
+    if zeros < 40:
+        return 5
+    return 4

@@ -39,6 +39,31 @@ def getLocalScores(state: State) -> np.ndarray:
                                else state.local_board_status[i][j]
     return res
 
+def getGlobalLineScores(lines: list[list[float]]) -> list[float]:
+    res = []
+    for line in lines:
+        zeros = zerosTwo = zerosHalf = ones = twos = threes = 0
+        for val in line:
+            if val == 1:
+                ones += 1
+            elif val == 2:
+                twos += 1
+            elif val == 3:
+                threes += 1
+            else:
+                zeros += val
+                zerosTwo += (1-val)
+                zerosHalf += (val-0.5)
+        if ones and not twos and not threes:
+            res.append(ones + zeros)
+        elif twos and not ones and not threes:
+            res.append(-twos - zerosTwo)
+        elif not ones and not twos and not threes:
+            res.append(zerosHalf)
+        else:
+            res.append(0)
+    return res
+        
 # This function calculates a score for a local board, and assumes that the game within the local board has not yet ended.
 # The score is positive if player 1 is winning, negative if player 2 is winning, and 0 if the game is even.
 def localScore(grid: np.ndarray) -> float:
