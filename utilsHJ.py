@@ -39,8 +39,27 @@ def getLocalScores(state: State) -> np.ndarray:
                                else state.local_board_status[i][j]
     return res
 
-def getGlobalLineScores(lines: list[list[float]]) -> list[float]:
+actionsToLines = {
+    (0,0): [0,3,6],
+    (0,1): [0,4],
+    (0,2): [0,5,7],
+    (1,0): [1,3],
+    (1,1): [1,4,6,7],
+    (1,2): [1,5],
+    (2,0): [2,3,7],
+    (2,1): [2,4],
+    (2,2): [2,5,6]
+}
+
+def getGlobalFeatures(lines: list[list[float]], stepBypass: bool, fillNum: int, prevAction: tuple) -> list[float]:
+    score = 0
+    scoreSq = 0
+    scoreCb = 0
+    actionScore = 0
+    actionScoreSq = 0
+    actionScoreCb = 0
     res = []
+    i = 0
     for line in lines:
         zeros = zerosTwo = zerosHalf = ones = twos = threes = 0
         for val in line:
@@ -54,14 +73,61 @@ def getGlobalLineScores(lines: list[list[float]]) -> list[float]:
                 zeros += val
                 zerosTwo += (1-val)
                 zerosHalf += (val-0.5)
+        lineScore = 0
+        lineScoreSq = 0
+        lineScoreCb = 0
         if ones and not twos and not threes:
-            res.append(ones + zeros)
+            lineScore = (ones + zeros)
+            lineScoreSq = (ones + zeros)*(ones + zeros)
+            lineScoreCb = lineScoreSq*(ones + zeros)
         elif twos and not ones and not threes:
-            res.append(-twos - zerosTwo)
+            lineScore = -(twos + zerosTwo)
+            lineScoreSq = -(twos + zerosTwo)*(twos + zerosTwo)
+            lineScoreCb = lineScoreSq*(twos + zerosTwo)
         elif not ones and not twos and not threes:
-            res.append(zerosHalf)
+            lineScore = zerosHalf
+            lineScoreSq = zerosHalf*abs(zerosHalf)
+            lineScoreCb = lineScoreSq*abs(zerosHalf)
         else:
-            res.append(0)
+            lineScore = 0
+            lineScoreSq = 0
+            lineScoreCb = 0
+        res.append(lineScore)
+        res.append(lineScoreSq)
+        res.append(lineScoreCb)
+        if prevAction is not None and i in actionsToLines[prevAction]:
+            actionScore += lineScore
+            actionScoreSq += lineScoreSq
+            actionScoreCb += lineScoreCb
+        score += lineScore
+        scoreSq += lineScoreSq
+        scoreCb += lineScoreCb
+        i += 1
+
+    if stepBypass and fillNum == 1:
+        res.append(abs(score))
+        res.append(abs(scoreSq))
+        res.append(abs(scoreCb))
+        res.append(1)
+    elif stepBypass and fillNum == 2:
+        res.append(-abs(score))
+        res.append(-abs(scoreSq))
+        res.append(-abs(scoreCb))
+        res.append(-1)
+    # elif fillNum == 1:
+    #     res.append(abs(actionScore))
+    #     res.append(abs(actionScoreSq))
+    #     res.append(0)
+    # elif fillNum == 2:
+    #     res.append(-abs(actionScore))
+    #     res.append(-abs(actionScoreSq))
+    #     res.append(0)
+    else:
+        res.append(0)
+        res.append(0)
+        res.append(0)
+        res.append(0)
+
     return res
         
 # This function calculates a score for a local board, and assumes that the game within the local board has not yet ended.

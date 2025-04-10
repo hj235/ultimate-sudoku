@@ -146,6 +146,6 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
-        state = state.invert()
+        # state = state.invert()
         best_action = self.minimax(state, self.depth, -np.inf, np.inf)
         return best_action

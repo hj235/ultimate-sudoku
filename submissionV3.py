@@ -43,17 +43,20 @@ def countZeros(state: State):
                         count += 1
     return count
 
-def getDepthFromZeros(zeros: int) -> int:
-    if zeros >= 36:
-        return 4
+def getDepthFromZeros(zeros: int, lenient=False) -> int:
+    d = 2 if lenient else 3
+    if zeros >= 50:
+        return d
+    elif zeros >= 30:
+        return d+1
     elif zeros >= 22:
-        return 5
+        return d+2
     elif zeros >= 18:
-        return 6
+        return d+3
     elif zeros >= 15:
-        return 7
+        return d+4
     elif zeros >= 13:
-        return 8
+        return d+5
     else:
         return 100
 
@@ -72,9 +75,9 @@ class StudentAgent:
 
         # predict some initial states
         state = State()
-        self.choose_action(state)
+        self.choose_action(state, initChoose=True)
         state = state.invert()
-        self.choose_action(state)
+        self.choose_action(state, initChoose=True)
 
     def cacheStateUtil(self, state: State, util: float) -> None:
         h = hashState(state)
@@ -146,8 +149,9 @@ class StudentAgent:
         if state.is_terminal():
             return state.terminal_utility()
         else:
-            if state in StudentAgent.mem:
-                return StudentAgent.mem[state]
+            h = hashState(state)
+            if h in StudentAgent.mem:
+                return StudentAgent.mem[h]
             else:
                 util = self.globalScore(state)
                 self.cacheStateUtil(state, util)
@@ -220,7 +224,7 @@ class StudentAgent:
                 return best_val, best_action
         return best_val, best_action
         
-    def choose_action(self, state: State) -> Action:
+    def choose_action(self, state: State, initChoose=False) -> Action:
         """Returns a valid action to be played on the board.
         Assuming that you are filling in the board with number 1.
 
@@ -228,8 +232,11 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
-        state = state.invert()
+        # state = state.invert()
         # print("test")
-        depth = getDepthFromZeros(countZeros(state))
+        sendBypassed = True
+        if state.prev_local_action:
+            sendBypassed = state.local_board_status[state.prev_local_action[0]][state.prev_local_action[1]] != 0
+        depth = getDepthFromZeros(countZeros(state), sendBypassed) if not initChoose else 1
         best_action = self.minimax(state, depth, -np.inf, np.inf)
         return best_action

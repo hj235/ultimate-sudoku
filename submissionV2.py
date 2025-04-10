@@ -170,7 +170,7 @@ class StudentAgent:
         ---------------
         state: The board to make a move on.
         """
-        # state = state.invert()
+        state = state.invert()
         # print("test")
         depth = getDepthFromZeros(np.sum(state.board == 0))
         best_action = self.minimax(state, depth, -np.inf, np.inf)

@@ -83,3 +83,5 @@ def getDepthFromZeros(zeros: int) -> int:
     return 4
 
 print(hashState(state))
+
+
