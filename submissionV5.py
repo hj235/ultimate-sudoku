@@ -159,7 +159,7 @@ class StudentAgent:
                     localBoardStatus[i][j] = state.local_board_status[i][j]
         localBoardLines = getLinesImm(localBoardStatus)
 
-        stepByPass = state.prev_local_action and \
+        stepByPass = state.prev_local_action is None or \
             state.local_board_status[state.prev_local_action[0]][state.prev_local_action[1]] != 0
         features, heurScore, bypassScore = \
             getGlobalFeatures(localBoardLines, stepByPass, state.fill_num, self.stepBypassAmplifier)
